@@ -1,4 +1,4 @@
-Feature: Product Overview
+Feature: Product Overview:
   As a user
   I want to be able to retrieve a paginated overview of product details
   So that I can place an order with the correct product details
