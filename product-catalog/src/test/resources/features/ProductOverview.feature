@@ -7,3 +7,13 @@ Feature: Product Overview:
     Given existing products
     When I retrieve products without pagination parameters
     Then I receive the expected page of products
+
+  Scenario Template: Retrieve the product overview with pagination parameters
+    Given existing products
+    When I retrieve page <page> with size <size> of the product overview
+    Then I receive the expected page of products
+    Examples:
+    | page | size |
+    | 0    | 10   |
+    | 1    | 10   |
+    | 0    | 20   |

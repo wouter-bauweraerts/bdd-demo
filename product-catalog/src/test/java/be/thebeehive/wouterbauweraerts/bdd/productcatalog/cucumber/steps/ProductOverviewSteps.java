@@ -9,25 +9,20 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.instancio.Instancio;
-import org.instancio.InstancioCollectionsApi;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.api.response.ProductDto;
-import be.thebeehive.wouterbauweraerts.bdd.productcatalog.assertions.HttpStatusAssert;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.cucumber.CucumberSpringConfiguration;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.domain.Product;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.domain.ProductFixtures;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.domain.mapper.ProductMapper;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.repository.ProductRepository;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.util.JacksonPage;
+import io.cucumber.java.After;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -50,6 +45,11 @@ public class ProductOverviewSteps extends CucumberSpringConfiguration {
     private List<ProductDto> expectedProducts;
     private HttpStatusCode statusCode;
 
+    @After
+    public void cleanup() {
+        productRepository.deleteAll();
+    }
+
     @Given("existing products")
     public void setupExistingProducts() {
         log.info("Setup existing products");
@@ -71,7 +71,7 @@ public class ProductOverviewSteps extends CucumberSpringConfiguration {
     @When("I retrieve products without pagination parameters")
     public void retrieveProducts() {
         log.debug("Retrieving products (without page parameter)");
-        ResponseEntity<JacksonPage<ProductDto>> response = restTemplate.exchange(API_PRODUCT_OVERVIEW, GET, null, PAGE_PRODUCT_DTO_TYPE_REF);
+        ResponseEntity<JacksonPage<ProductDto>> response =getProductOverview(API_PRODUCT_OVERVIEW);
 
         statusCode = response.getStatusCode();
         result = response.getBody();
@@ -80,5 +80,32 @@ public class ProductOverviewSteps extends CucumberSpringConfiguration {
                 .limit(10)
                 .map(productMapper::map)
                 .toList();
+    }
+
+    @When("I retrieve page {int} with size {int} of the product overview")
+    public void iRetrievePageWithSizeOfTheProductOverview(int page, int size) {
+        log.debug("Retrieving products (with page parameter: page = %d, size = %d)".formatted(page, size));
+        ResponseEntity<JacksonPage<ProductDto>> response = getProductOverview(productOverviewWithPagination(page, size));
+
+        statusCode = response.getStatusCode();
+        result = response.getBody();
+        expectedProducts = products.stream()
+                .sorted(Comparator.comparing(Product::getId))
+                .skip((long)page * size)
+                .limit(size)
+                .map(productMapper::map)
+                .toList();
+    }
+
+    private static final String productOverviewWithPagination(int page, int size) {
+        return API_PRODUCT_OVERVIEW + "?page=" + page + "&size=" + size;
+    }
+
+    private ResponseEntity<JacksonPage<ProductDto>> getProductOverview(String request) {
+        return restTemplate.exchange(
+                request,
+                GET,
+                null,
+                PAGE_PRODUCT_DTO_TYPE_REF);
     }
 }
