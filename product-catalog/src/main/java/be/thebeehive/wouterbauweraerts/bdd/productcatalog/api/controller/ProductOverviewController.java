@@ -7,12 +7,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.api.response.ProductDto;
+import be.thebeehive.wouterbauweraerts.bdd.productcatalog.domain.ProductService;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/product-overview")
+@RequiredArgsConstructor
 public class ProductOverviewController {
+    private final ProductService productService;
     @GetMapping
     public Page<ProductDto> getProductOverview(Pageable pageable) {
-        return Page.empty();
+        return productService.getProducts(pageable);
     }
 }
