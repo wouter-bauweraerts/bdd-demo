@@ -1,4 +1,4 @@
-package productcatalog;
+package be.thebeehive.wouterbauweraerts.bdd.ordersystem;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
