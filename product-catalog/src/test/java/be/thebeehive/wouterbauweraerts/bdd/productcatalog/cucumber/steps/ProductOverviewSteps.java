@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.instancio.Select.field;
 import static org.springframework.http.HttpMethod.GET;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.instancio.Instancio;
@@ -24,6 +25,7 @@ import be.thebeehive.wouterbauweraerts.bdd.productcatalog.assertions.HttpStatusA
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.cucumber.CucumberSpringConfiguration;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.domain.Product;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.domain.ProductFixtures;
+import be.thebeehive.wouterbauweraerts.bdd.productcatalog.domain.mapper.ProductMapper;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.repository.ProductRepository;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.util.JacksonPage;
 import io.cucumber.java.en.Given;
@@ -40,13 +42,18 @@ public class ProductOverviewSteps extends CucumberSpringConfiguration {
 
     @Autowired
     ProductRepository productRepository;
+    @Autowired
+    ProductMapper productMapper;
 
+    private List<Product> products;
     private JacksonPage<ProductDto> result;
+    private List<ProductDto> expectedProducts;
+    private HttpStatusCode statusCode;
 
     @Given("existing products")
     public void setupExistingProducts() {
         log.info("Setup existing products");
-        List<Product> products = Instancio.ofList(ProductFixtures.PRODUCT_MODEL)
+        products = Instancio.ofList(ProductFixtures.PRODUCT_MODEL)
                 .size(50)
                 .ignore(field(Product::getId))
                 .create();
@@ -55,17 +62,23 @@ public class ProductOverviewSteps extends CucumberSpringConfiguration {
         log.info("Products saved");
     }
 
-    @When("I retrieve products")
+    @Then("I receive the expected page of products")
+    public void verifyFirstPage() {
+        assertStatusCode(statusCode).isNotNull().is2xxCode();
+        assertThat(result).containsExactlyInAnyOrderElementsOf(expectedProducts);
+    }
+
+    @When("I retrieve products without pagination parameters")
     public void retrieveProducts() {
         log.debug("Retrieving products (without page parameter)");
         ResponseEntity<JacksonPage<ProductDto>> response = restTemplate.exchange(API_PRODUCT_OVERVIEW, GET, null, PAGE_PRODUCT_DTO_TYPE_REF);
 
-        assertStatusCode(response.getStatusCode()).is2xxCode();
+        statusCode = response.getStatusCode();
         result = response.getBody();
-    }
-
-    @Then("I receive the first page of products")
-    public void verifyFirstPage() {
-        log.info("Verify first page of products");
+        expectedProducts = products.stream()
+                .sorted(Comparator.comparing(Product::getId))
+                .limit(10)
+                .map(productMapper::map)
+                .toList();
     }
 }
