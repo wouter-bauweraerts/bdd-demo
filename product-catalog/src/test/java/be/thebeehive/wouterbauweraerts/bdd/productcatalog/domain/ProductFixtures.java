@@ -34,7 +34,7 @@ public class ProductFixtures {
         }
 
         public FixtureBuilder ignoreId() {
-            return setField(Product::getId, null);
+            return withId(null);
         }
 
         public FixtureBuilder ignoreBrand() {
@@ -43,6 +43,10 @@ public class ProductFixtures {
 
         public FixtureBuilder ignoreType() {
             return setField(Product::getType, null);
+        }
+
+        public FixtureBuilder withId(Integer productId) {
+            return setField(Product::getId, productId);
         }
     }
 }

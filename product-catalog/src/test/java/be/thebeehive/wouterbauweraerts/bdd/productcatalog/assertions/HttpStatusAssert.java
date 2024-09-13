@@ -19,4 +19,11 @@ public class HttpStatusAssert extends AbstractAssert<HttpStatusAssert, HttpStatu
                 return this.myself;
                 else throw Failures.instance().failure("Expected %d to be within 2xx range".formatted(this.actual.value()));
     }
+
+    public HttpStatusAssert is404() {
+        if(this.actual.isSameCodeAs(HttpStatusCode.valueOf(404)))
+            return this.myself;
+        else throw Failures.instance().failure("Expected %d to be Http 404".formatted(this.actual.value()));
+
+    }
 }

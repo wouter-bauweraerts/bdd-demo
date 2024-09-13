@@ -3,6 +3,7 @@ package be.thebeehive.wouterbauweraerts.bdd.productcatalog.api.controller;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,8 +16,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ProductOverviewController {
     private final ProductService productService;
+
     @GetMapping
     public Page<ProductDto> getProductOverview(Pageable pageable) {
         return productService.getProducts(pageable);
+    }
+
+    @GetMapping("/{productId}")
+    public ProductDto getProductById(@PathVariable("productId") int productId) {
+        return productService.getProduct(productId);
     }
 }

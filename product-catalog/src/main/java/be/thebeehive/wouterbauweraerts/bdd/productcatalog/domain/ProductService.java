@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.api.response.ProductDto;
+import be.thebeehive.wouterbauweraerts.bdd.productcatalog.domain.exception.ProductNotFoundException;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.domain.mapper.ProductMapper;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,5 +19,11 @@ public class ProductService {
     public Page<ProductDto> getProducts(Pageable pageable) {
         return productRepository.findAll(pageable)
                 .map(productMapper::map);
+    }
+
+    public ProductDto getProduct(int productId) {
+        return productRepository.findById(productId)
+                .map(productMapper::map)
+                .orElseThrow(() -> ProductNotFoundException.withProductId(productId));
     }
 }

@@ -7,20 +7,16 @@ import static org.springframework.http.HttpMethod.GET;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
 import org.instancio.Instancio;
-import org.junit.jupiter.api.AfterEach;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.api.response.ProductDto;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.cucumber.CucumberSpringConfiguration;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.domain.Product;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.domain.ProductFixtures;
-import be.thebeehive.wouterbauweraerts.bdd.productcatalog.domain.mapper.ProductMapper;
-import be.thebeehive.wouterbauweraerts.bdd.productcatalog.repository.ProductRepository;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.util.JacksonPage;
 import io.cucumber.java.After;
 import io.cucumber.java.en.Given;
@@ -34,16 +30,13 @@ import lombok.extern.slf4j.Slf4j;
 public class ProductOverviewSteps extends CucumberSpringConfiguration {
     private static final ParameterizedTypeReference<JacksonPage<ProductDto>> PAGE_PRODUCT_DTO_TYPE_REF = new ParameterizedTypeReference<>() {};
     private static final String API_PRODUCT_OVERVIEW = "/api/product-overview";
+    private static final String API_PRODUCT_DETAIL = "/api/product-overview/%d";
 
-    @Autowired
-    ProductRepository productRepository;
-    @Autowired
-    ProductMapper productMapper;
-
-    private List<Product> products;
     private JacksonPage<ProductDto> result;
     private List<ProductDto> expectedProducts;
-    private HttpStatusCode statusCode;
+
+    private ProductDto actualProduct;
+    private ProductDto expectedProduct;
 
     @After
     public void cleanup() {
@@ -97,7 +90,56 @@ public class ProductOverviewSteps extends CucumberSpringConfiguration {
                 .toList();
     }
 
-    private static final String productOverviewWithPagination(int page, int size) {
+    @When("I retrieve a product with a non-existing ID")
+    public void requestNonExistingProduct(){
+        Random random = new Random(459);
+        int nonExistingId;
+        do {
+            nonExistingId = random.nextInt(5000);
+        } while (productIdDoesNotExist(nonExistingId));
+
+        statusCode = getProduct(nonExistingId).getStatusCode();
+    }
+
+
+    @Then("I receive a 404 error")
+    public void verifyHttpNotFound() {
+        assertStatusCode(statusCode).is404();
+    }
+
+    @When("I retrieve a product with an existing ID")
+    public void retrieveExistingProduct() {
+        int existingId = products.stream().findAny().map(Product::getId).orElse(1);
+
+        expectedProduct = products.stream().filter(p -> p.getId().equals(existingId))
+                .findFirst()
+                .map(productMapper::map)
+                .orElseThrow();
+
+        ResponseEntity<ProductDto> productResponse = getProduct(existingId);
+        statusCode = productResponse.getStatusCode();
+        actualProduct = productResponse.getBody();
+    }
+
+    @Then("I receive the expected product")
+    public void validateProduct() {
+        assertStatusCode(statusCode).isNotNull().is2xxCode();
+        assertThat(actualProduct).isEqualTo(expectedProduct);
+    }
+
+    private boolean productIdDoesNotExist(int nonExistingId) {
+        return products.stream().anyMatch(p -> p.getId().equals(nonExistingId));
+    }
+
+    private ResponseEntity<ProductDto> getProduct(int id) {
+        return restTemplate.exchange(
+                API_PRODUCT_DETAIL.formatted(id),
+                GET,
+                null,
+                ProductDto.class);
+    }
+
+    private static String productOverviewWithPagination(int page, int size) {
         return API_PRODUCT_OVERVIEW + "?page=" + page + "&size=" + size;
     }
 
