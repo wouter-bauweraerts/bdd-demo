@@ -6,9 +6,10 @@ Feature: Product Detail:
   Scenario: The requested product does not exist
     Given existing products
     When I retrieve a product with a non-existing ID
-    Then I receive a 404 error
+    Then I receive status 404
 
   Scenario: The requested product exists
     Given existing products
     When I retrieve a product with an existing ID
     Then I receive the expected product
+    And I receive status 200
