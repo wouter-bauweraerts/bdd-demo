@@ -1,4 +1,4 @@
-package be.thebeehive.wouterbauweraerts.bdd.productcatalog.util;
+package be.thebeehive.wouterbauweraerts.bdd.common.fixtures;
 
 import static org.instancio.Select.field;
 

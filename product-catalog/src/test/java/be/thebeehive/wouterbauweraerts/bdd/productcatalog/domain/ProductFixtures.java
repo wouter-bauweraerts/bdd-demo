@@ -6,7 +6,7 @@ import static org.instancio.Select.allInts;
 import org.instancio.Instancio;
 import org.instancio.Model;
 
-import be.thebeehive.wouterbauweraerts.bdd.productcatalog.util.AbstractFixtureBuilder;
+import be.thebeehive.wouterbauweraerts.bdd.common.fixtures.AbstractFixtureBuilder;
 
 public class ProductFixtures {
     public static final Model<Product> PRODUCT_MODEL = Instancio.of(Product.class)

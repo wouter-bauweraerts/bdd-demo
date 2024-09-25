@@ -1,6 +1,7 @@
 package be.thebeehive.wouterbauweraerts.bdd.productcatalog.cucumber.steps;
 
-import static be.thebeehive.wouterbauweraerts.bdd.productcatalog.assertions.HttpStatusAssert.assertStatusCode;
+
+import static be.thebeehive.wouterbauweraerts.bdd.common.assertions.HttpStatusAssert.assertStatusCode;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,6 +14,6 @@ public class HttpStatusCodeSteps {
 
     @Then("I receive status {int}")
     public void validateStatus(int expectedStatus) {
-        assertStatusCode(statusInformation.getStatusCode()).isStatus(expectedStatus);
+        assertStatusCode(statusInformation.getStatusCode().value()).isStatus(expectedStatus);
     }
 }
