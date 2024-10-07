@@ -10,6 +10,7 @@ import be.thebeehive.wouterbauweraerts.bdd.productcatalog.domain.Product;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.domain.ProductFixtures;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.repository.ProductRepository;
 import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 
 public class DataManagementSteps {
@@ -30,7 +31,7 @@ public class DataManagementSteps {
         );
     }
 
-    @After
+    @Before
     public void cleanup() {
         productRepository.deleteAll();
     }

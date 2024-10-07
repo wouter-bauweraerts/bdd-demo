@@ -11,4 +11,6 @@ import lombok.Data;
 @ScenarioScope
 public class HttpStatusState {
     HttpStatusCode statusCode;
+    String errorMessage;
+
 }

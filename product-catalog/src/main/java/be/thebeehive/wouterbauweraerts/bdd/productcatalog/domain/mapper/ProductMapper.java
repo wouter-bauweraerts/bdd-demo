@@ -5,6 +5,7 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import be.thebeehive.wouterbauweraerts.bdd.productcatalog.api.requests.AddProductRequest;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.api.response.ProductDto;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.domain.Product;
 
@@ -12,4 +13,7 @@ import be.thebeehive.wouterbauweraerts.bdd.productcatalog.domain.Product;
 public interface ProductMapper {
     @Mapping(source = "id", target = "id", defaultValue = "-1")
     ProductDto map(Product product);
+
+    @Mapping(target = "id", ignore = true)
+    Product map(AddProductRequest request);
 }

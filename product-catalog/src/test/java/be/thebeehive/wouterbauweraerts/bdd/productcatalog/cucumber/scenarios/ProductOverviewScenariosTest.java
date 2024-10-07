@@ -7,7 +7,10 @@ import org.junit.platform.suite.api.IncludeEngines;
 import org.junit.platform.suite.api.SelectClasspathResource;
 import org.junit.platform.suite.api.Suite;
 
+import jakarta.transaction.Transactional;
+
 @Suite
+@Transactional
 @IncludeEngines("cucumber")
 @SelectClasspathResource("features")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "be.thebeehive.wouterbauweraerts.bdd.productcatalog.cucumber.steps")

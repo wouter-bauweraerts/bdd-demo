@@ -31,6 +31,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import be.thebeehive.wouterbauweraerts.bdd.productcatalog.api.requests.AddProductRequest;
+import be.thebeehive.wouterbauweraerts.bdd.productcatalog.api.requests.AddProductRequestFixtures;
+import be.thebeehive.wouterbauweraerts.bdd.productcatalog.api.response.AddProductResponse;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.api.response.ProductDto;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.domain.exception.ProductNotFoundException;
 import be.thebeehive.wouterbauweraerts.bdd.productcatalog.domain.mapper.ProductMapper;
@@ -102,5 +105,22 @@ class ProductServiceTest {
         when(productRepository.findById(anyInt())).thenReturn(Optional.of(product));
 
         assertThat(productService.getProduct(productId)).isEqualTo(expected);
+    }
+
+    @Test
+    void addProduct() {
+        ArgumentCaptor<Product> persistProductCaptor = ArgumentCaptor.forClass(Product.class);
+        AddProductRequest request = AddProductRequestFixtures.anAddProductRequest();
+        Product addedProduct = ProductFixtures.aProduct();
+
+        when(productRepository.save(any(Product.class))).thenReturn(addedProduct);
+
+        assertThat(productService.addProduct(request)).isEqualTo(new AddProductResponse(addedProduct.getId()));
+
+        verify(productRepository).save(persistProductCaptor.capture());
+        assertThat(persistProductCaptor.getValue())
+                .returns(request.brand(), Product::getBrand)
+                .returns(request.type(), Product::getType)
+                .returns(null, Product::getId);
     }
 }

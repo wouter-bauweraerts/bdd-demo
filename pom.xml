@@ -13,7 +13,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.3</version>
+        <version>3.3.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -25,7 +25,7 @@
         <testcontainers.version>1.19.8</testcontainers.version>
         <cucumber.version>7.18.1</cucumber.version>
         <junit.platform.suite.version>1.11.0</junit.platform.suite.version>
-        <instancio-junit.version>5.0.1</instancio-junit.version>
+        <instancio-junit.version>5.0.2</instancio-junit.version>
         <flyway-database-postgresql.version>10.17.3</flyway-database-postgresql.version>
         <mapstruct.version>1.6.0</mapstruct.version>
         <lombok.version>1.18.34</lombok.version>
@@ -33,6 +33,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>be.thebeehive.wouterbauweraerts.bdd</groupId>
+                <artifactId>common</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
             <dependency>
                 <groupId>be.thebeehive.wouterbauweraerts.bdd</groupId>
                 <artifactId>common</artifactId>
@@ -54,6 +59,11 @@
             <dependency>
                 <groupId>org.instancio</groupId>
                 <artifactId>instancio-junit</artifactId>
+                <version>${instancio-junit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.wouter-bauweraerts</groupId>
+                <artifactId>instancio-fixture-builder</artifactId>
                 <version>${instancio-junit.version}</version>
             </dependency>
             <dependency>
