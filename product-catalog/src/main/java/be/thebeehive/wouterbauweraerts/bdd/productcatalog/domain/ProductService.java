@@ -37,4 +37,8 @@ public class ProductService {
         );
         return new AddProductResponse(newProduct.getId());
     }
+
+    public void deleteProduct(int productId) {
+        productRepository.deleteById(productId);
+    }
 }

@@ -123,4 +123,12 @@ class ProductServiceTest {
                 .returns(request.type(), Product::getType)
                 .returns(null, Product::getId);
     }
+
+    @Test
+    void deleteProductDeletesProductByIdFromRepository() {
+        Integer productId = Instancio.create(Integer.class);
+        productService.deleteProduct(productId);
+
+        verify(productRepository).deleteById(productId);
+    }
 }
