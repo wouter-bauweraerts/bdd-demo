@@ -17,11 +17,19 @@ public class HttpResponseSteps {
         assertStatusCode(responseState.getStatusCode().value()).isStatus(statusCode);
     }
 
-    @And("I receive the message {}")
+    @Then("I receive the message {}")
     public void iReceiveTheMessageErrormessage(String errorMessage) {
         assertThat(responseState.getMessage()).withFailMessage(() -> "Expected Http error message '%s' to be '%s'".formatted(
                 responseState.getMessage(),
                 errorMessage
         )).isEqualTo(errorMessage);
+    }
+
+    @Then("The errormessage contains {}")
+    public void errorMessageContains(String expectedErrorMessage) {
+        assertThat(responseState.getMessage()).withFailMessage(() -> "Expected error message '%s' to contain '%s'".formatted(
+                responseState.getMessage(),
+                expectedErrorMessage
+        )).contains(expectedErrorMessage);
     }
 }

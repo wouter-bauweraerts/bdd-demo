@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import be.thebeehive.wouterbauweraerts.bdd.ordersystem.api.exception.ProductNotFoundException;
 import be.thebeehive.wouterbauweraerts.bdd.ordersystem.api.request.CreateOrderRequest;
 import be.thebeehive.wouterbauweraerts.bdd.ordersystem.api.request.CreateOrderRequestFixtures;
+import be.thebeehive.wouterbauweraerts.bdd.ordersystem.api.request.Orderline;
 import be.thebeehive.wouterbauweraerts.bdd.ordersystem.productcatalog.ProductCatalogClient;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,9 +33,10 @@ class OrderServiceTest {
         assertThatThrownBy(() -> orderService.createOrder(request))
                 .isInstanceOf(ProductNotFoundException.class)
                 .hasMessage("Product %s not found".formatted(
-                        request.orderLines().keySet()
+                        request.orderlines()
                                 .stream()
                                 .findFirst()
+                                .map(Orderline::productId)
                                 .orElse(-1)
                 ));
     }
