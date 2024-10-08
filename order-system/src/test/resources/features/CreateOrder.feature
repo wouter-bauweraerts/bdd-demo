@@ -10,4 +10,4 @@ Feature: Create orders:
     And I receive the message <errormessage>
     Examples:
     | productId | status | errormessage |
-    | 1234      | 400    | Product 1234 does not exist |
+    | 1234      | 409    | Product 1234 not found |

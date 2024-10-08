@@ -1,9 +1,9 @@
-package be.thebeehive.wouterbauweraerts.bdd.odersystem.cucumber.steps;
+package be.thebeehive.wouterbauweraerts.bdd.ordersystem.cucumber.steps;
 
 import static be.thebeehive.wouterbauweraerts.bdd.common.assertions.HttpStatusAssert.assertStatusCode;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import be.thebeehive.wouterbauweraerts.bdd.odersystem.cucumber.state.HttpResponseState;
+import be.thebeehive.wouterbauweraerts.bdd.ordersystem.cucumber.state.HttpResponseState;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import lombok.RequiredArgsConstructor;

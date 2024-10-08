@@ -1,4 +1,4 @@
-package be.thebeehive.wouterbauweraerts.bdd.odersystem.cucumber.state;
+package be.thebeehive.wouterbauweraerts.bdd.ordersystem.cucumber.state;
 
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;

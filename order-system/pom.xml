@@ -17,7 +17,6 @@
         <dependency>
             <groupId>be.thebeehive.wouterbauweraerts.bdd</groupId>
             <artifactId>common</artifactId>
-            <type>test-jar</type>
         </dependency>
 
         <dependency>
@@ -50,6 +49,12 @@
         </dependency>
 
         <dependency>
+            <groupId>be.thebeehive.wouterbauweraerts.bdd</groupId>
+            <artifactId>common</artifactId>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
@@ -62,6 +67,16 @@
         <dependency>
             <groupId>org.instancio</groupId>
             <artifactId>instancio-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.wiremock</groupId>
+            <artifactId>wiremock-standalone</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.wouter-bauweraerts</groupId>
+            <artifactId>instancio-fixture-builder</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
