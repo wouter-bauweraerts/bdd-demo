@@ -48,3 +48,10 @@ Feature: Create orders:
     Then I receive status 201
     And The order is created
 #    And The expected event is produced
+
+  Scenario: I want to create an order with multiple products
+    Given a valid request with multiple products
+    When I try to create an order
+    Then I receive status 201
+    And The order is created
+#    And The expected event is produced

@@ -78,6 +78,22 @@ public class CreateOrderSteps extends AbstractStepDefinition {
         );
     }
 
+    @Given("a valid request with multiple products")
+    public void setupValidRequestWithMultipleProducts() {
+        CreateOrderRequest request = CreateOrderRequestFixtures.aCreateOrderRequest();
+        Map<Integer, Triple<Integer, Product, Integer>> products = request.orderlines().stream()
+                .map(it -> Triple.of(it.productId(), ProductFixtures.aProduct(), it.quantity()))
+                .collect(Collectors.toMap(Triple::getLeft, Function.identity()));
+
+        products.forEach((key, value) -> when(productCatalogClient.getProduct(key)).thenReturn(Optional.of(value.getMiddle())));
+        createOrderState.setRequest(request);
+        createOrderState.setExpectedOrderlines(
+                products.values().stream()
+                        .map(it -> new OrderlineEntity(it.getLeft(), it.getMiddle().brand(), it.getMiddle().type(), it.getRight()))
+                        .toList()
+        );
+    }
+
     @When("I try to create an order with product {int}")
     public void createOrderWithNonExistingProduct(int productId) {
         CreateOrderRequest request = CreateOrderRequestFixtures.fixtureBuilder()
@@ -165,7 +181,7 @@ public class CreateOrderSteps extends AbstractStepDefinition {
         assertThat(createOrderState.getOrderId()).isNotNull();
         assertThat(orderRepository.findById(createOrderState.getOrderId())).hasValueSatisfying(order -> {
             assertThat(order).returns(createOrderState.getCustomerId(), Order::getCustomerId);
-            assertThat(order.getOrderlines()).usingRecursiveFieldByFieldElementComparator().containsExactlyElementsOf(createOrderState.getExpectedOrderlines());
+            assertThat(order.getOrderlines()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrderElementsOf(createOrderState.getExpectedOrderlines());
         });
     }
 }
