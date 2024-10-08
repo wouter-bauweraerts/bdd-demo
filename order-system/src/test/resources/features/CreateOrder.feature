@@ -41,3 +41,10 @@ Feature: Create orders:
       | quantity |
       | 0        |
       | -1       |
+
+  Scenario: I want to create an order with a single orderline
+    Given A valid request with single product
+    When I try to create an order
+    Then I receive status 201
+    And The order is created
+#    And The expected event is produced

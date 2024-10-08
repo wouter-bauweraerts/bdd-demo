@@ -1,6 +1,7 @@
 package be.thebeehive.wouterbauweraerts.bdd.ordersystem.domain;
 
-import org.flywaydb.core.internal.util.Pair;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import be.thebeehive.wouterbauweraerts.bdd.ordersystem.api.exception.ProductNotFoundException;
@@ -8,25 +9,29 @@ import be.thebeehive.wouterbauweraerts.bdd.ordersystem.api.request.CreateOrderRe
 import be.thebeehive.wouterbauweraerts.bdd.ordersystem.api.request.Orderline;
 import be.thebeehive.wouterbauweraerts.bdd.ordersystem.api.response.CreateOrderResponse;
 import be.thebeehive.wouterbauweraerts.bdd.ordersystem.productcatalog.ProductCatalogClient;
-import be.thebeehive.wouterbauweraerts.bdd.ordersystem.productcatalog.dto.Product;
+import be.thebeehive.wouterbauweraerts.bdd.ordersystem.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
     private final ProductCatalogClient productCatalogClient;
+    private final OrderMapper orderMapper;
+    private final OrderRepository orderRepository;
+
 
     public CreateOrderResponse createOrder(CreateOrderRequest request) {
-        request.orderlines()
+        List<OrderlineEntity> orderlines = request.orderlines()
                 .stream()
                 .map(this::enrichOrderLines)
                 .toList();
-        return new CreateOrderResponse(-1);
+        Order order = orderRepository.save(orderMapper.mapOrder(request, orderlines));
+        return new CreateOrderResponse(order.getId());
     }
 
-    private Pair<Product, Integer> enrichOrderLines(Orderline orderline) {
+    private OrderlineEntity enrichOrderLines(Orderline orderline) {
         return productCatalogClient.getProduct(orderline.productId())
-                .map(p -> Pair.of(p, orderline.quantity()))
+                .map(p -> orderMapper.mapOrderline(orderline, p))
                 .orElseThrow(() -> ProductNotFoundException.withProductId(orderline.productId()));
     }
 }
