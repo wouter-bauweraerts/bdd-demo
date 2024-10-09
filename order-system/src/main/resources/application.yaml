@@ -1,2 +1,5 @@
 server:
   port: 8081
+
+product-overview:
+  base-uri: http://localhost:8080
